@@ -289,3 +289,35 @@ def test_NO_aplicar_descuento_condicionado():
 
     # Assert
     assert monto_actual == monto_antes
+
+def test_hay_stock():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agrega un productp
+    Act: Se agregan se agrega el mismo producto
+    Assert: Se verifica que no supere el stock
+    """
+    # Arrange
+    carrito = Carrito()
+    producto = Producto("Iphone", precio=800, stock = 5)
+    carrito.agregar_producto(producto, cantidad=1)
+    # Act
+    carrito.agregar_producto(producto, cantidad=2)
+    items = carrito.obtener_items()
+    # Assert
+    assert len(items)==1 and items[0].cantidad<=items[0].producto.stock
+
+def test_NO_hay_stock():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agrega un productp
+    Act: Se agregan se agrega el mismo producto
+    Assert: Se verifica que ocurre un error al superar el stock
+    """
+    # Arrange
+    carrito = Carrito()
+    producto = Producto("Iphone", precio=800, stock = 5)
+    carrito.agregar_producto(producto, cantidad=1)
+    # Act & Assert
+    with pytest.raises(ValueError):
+        carrito.agregar_producto(producto, cantidad=5)

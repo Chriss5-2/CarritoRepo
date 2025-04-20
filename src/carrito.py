@@ -1,9 +1,10 @@
 # src/carrito.py
 
 class Producto:
-    def __init__(self, nombre, precio):
+    def __init__(self, nombre, precio, stock):
         self.nombre = nombre
         self.precio = precio
+        self.stock = stock
 
     def __repr__(self):
         return f"Producto({self.nombre}, {self.precio})"
@@ -30,8 +31,11 @@ class Carrito:
         Agrega un producto al carrito. Si el producto ya existe, incrementa la cantidad.
         """
         for item in self.items:
-            if item.producto.nombre == producto.nombre:
-                item.cantidad += cantidad
+            if item.producto.nombre == producto.nombre :
+                if item.cantidad + cantidad <= producto.stock:
+                    item.cantidad += cantidad
+                else:
+                    raise ValueError("Supera el stock")
                 return
         self.items.append(ItemCarrito(producto, cantidad))
 
