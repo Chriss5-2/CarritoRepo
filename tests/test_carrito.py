@@ -207,3 +207,85 @@ def test_vaciar_carrito():
     # Assert
     assert len(items)==0 and carrito.calcular_total() == 0
 
+def test_aplicar_descuento_condicionado():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan productos
+    Act: Se verifica si cumple los requisitos para aplicar un descuento
+    Assert: Se verifica si el costo total es menor al inicial
+    """
+    # Arrange
+    carrito = Carrito()
+    producto1 = ProductoFactory(nombre="Smartphone", precio=800.00)
+    producto2 = ProductoFactory(nombre="Iphone", precio=1000.50)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+
+    # Act
+    monto_antes = carrito.calcular_total()
+    monto_actual = carrito.aplicar_descuento_condicional(porcentaje=15, minimo=500)
+
+    # Assert
+    assert monto_actual > monto_antes
+
+def test_NO_aplicar_descuento_condicionado():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan productos
+    Act: Se verifica si cumple los requisitos para aplicar un descuento
+    Assert: Se verifica que el costo actual es igual al inicial
+    """
+    # Arrange
+    carrito = Carrito()
+    producto1 = ProductoFactory(nombre="Yogurt", precio=50.00)
+    producto2 = ProductoFactory(nombre="Mochila", precio=200.50)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+
+    # Act
+    monto_antes = carrito.calcular_total()
+    monto_actual = carrito.aplicar_descuento_condicional(porcentaje=15, minimo=500)
+
+    # Assert
+    assert monto_actual == monto_antes
+def test_aplicar_descuento_condicionado():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan productos
+    Act: Se verifica si cumple los requisitos para aplicar un descuento
+    Assert: Se verifica si el costo total es menor al inicial
+    """
+    # Arrange
+    carrito = Carrito()
+    producto1 = ProductoFactory(nombre="Smartphone", precio=800.00)
+    producto2 = ProductoFactory(nombre="Iphone", precio=1000.50)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+
+    # Act
+    monto_antes = carrito.calcular_total()
+    monto_actual = carrito.aplicar_descuento_condicional(porcentaje=15, minimo=500)
+
+    # Assert
+    assert monto_actual < monto_antes
+
+def test_NO_aplicar_descuento_condicionado():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan productos
+    Act: Se verifica si cumple los requisitos para aplicar un descuento
+    Assert: Se verifica que el costo actual es igual al inicial
+    """
+    # Arrange
+    carrito = Carrito()
+    producto1 = ProductoFactory(nombre="Yogurt", precio=50.00)
+    producto2 = ProductoFactory(nombre="Mochila", precio=200.50)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+
+    # Act
+    monto_antes = carrito.calcular_total()
+    monto_actual = carrito.aplicar_descuento_condicional(porcentaje=15, minimo=500)
+
+    # Assert
+    assert monto_actual == monto_antes
