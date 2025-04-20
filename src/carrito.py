@@ -103,10 +103,10 @@ class Carrito:
         self.items = []
         return self.items
 
-#   def aplicar_descuento_condicionar(porcentaje, mínimo):
+    def aplicar_descuento_condicional(self, porcentaje, minimo):
         """
         Aplica descuento determinado solo si el monto total es mayor al mínimo dado
         """
-#        if self.calcular_total() >= mínimo:
-#            return self.aplicar_descuento(porcentaje=porcentaje)
-#        return self.calcular_total()
+        if self.calcular_total() >= minimo:
+            return self.aplicar_descuento(porcentaje=porcentaje)
+        return self.calcular_total()
