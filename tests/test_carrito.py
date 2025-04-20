@@ -201,7 +201,9 @@ def test_vaciar_carrito():
     carrito.agregar_producto(producto2, cantidad=1)
 
     # Act
-    items = carrito.vaciar()
+    carrito.vaciar()
+    items = carrito.obtener_items()
 
     # Assert
-    assert len(items)==0
+    assert len(items)==0 and carrito.calcular_total() == 0
+
