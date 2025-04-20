@@ -25,6 +25,21 @@ def test_agregar_producto_nuevo():
     assert items[0].producto.nombre == "Laptop"
     assert items[0].cantidad == 1
 
+def test_agregar_producto_con_conftest(carrito, producto_laptop):
+    """
+    AAA:
+    Arrange: Se crea un carrito y se genera un producto.
+    Act: Se agrega el producto al carrito.
+    Assert: Se verifica que el carrito contiene un item con el producto y cantidad 1.
+    """
+    # Arrange & Act
+    carrito.agregar_producto(producto_laptop)
+
+    # Assert
+    items = carrito.obtener_items()
+    assert len(items) == 1
+    assert items[0].producto.nombre == "Laptop"
+    assert items[0].cantidad == 1
 
 def test_agregar_producto_existente_incrementa_cantidad():
     """
