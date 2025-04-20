@@ -321,3 +321,56 @@ def test_NO_hay_stock():
     # Act & Assert
     with pytest.raises(ValueError):
         carrito.agregar_producto(producto, cantidad=5)
+
+def test_items_ordenados_por_precio():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan dos productos
+    Act: Se ordenan de acuerdo al precio
+    Assert: Se verifica que los precios vayan de orden ascedente
+    """
+    # Arrange
+    carrito= Carrito()
+    producto1 = Producto("Iphone", precio=1000, stock=2)
+    producto2 = Producto("Smartphone", precio=800, stock=2)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+    # Act
+    items = carrito.obtener_items_ordenados("precio")
+    # Assert
+    assert items[0].producto.precio < items[1].producto.precio
+
+def test_items_ordenados_por_nombre():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan dos productos
+    Act: Se ordenan de acuerdo al nombre
+    Assert: Se verifica que los nombres vayan de orden ascedente
+    """
+    # Arrange
+    carrito= Carrito()
+    producto1 = Producto("Iphone", precio=1000, stock=2)
+    producto2 = Producto("Smartphone", precio=800, stock=2)
+    carrito.agregar_producto(producto2, cantidad=1)
+    carrito.agregar_producto(producto1, cantidad=1)
+    # Act
+    items = carrito.obtener_items_ordenados("nombre")
+    # Assert
+    assert items[0].producto.nombre < items[1].producto.nombre
+
+def test_items_ordenados_por_criterio_equivocado():
+    """
+    AAA:
+    Arrange: Se crea un carrito y se agregan dos productos
+    Act: Se ordenan de acuerdo a un criterio que no existe
+    Assert: Se verifica que los precios vayan de orden ascedente
+    """
+    # Arrange
+    carrito= Carrito()
+    producto1 = Producto("Iphone", precio=1000, stock=2)
+    producto2 = Producto("Smartphone", precio=800, stock=2)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
+    # Act & Assert
+    with pytest.raises(ValueError):
+        items = carrito.obtener_items_ordenados("criterioOtro")
