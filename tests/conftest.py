@@ -62,3 +62,7 @@ def producto_yogurt():
 @pytest.fixture
 def producto_mochila():
     return ProductoFactory(nombre="Mochila", precio=200.50)
+
+@pytest.fixture
+def producto_smartwatch():
+    return ProductoFactory(nombre="Smartwatch", precio=250.00)
