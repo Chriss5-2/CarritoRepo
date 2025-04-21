@@ -8,6 +8,34 @@ class Producto:
 
     def __repr__(self):
         return f"Producto({self.nombre}, {self.precio})"
+    
+    def _buscar_item(self, producto):
+        for item in self.items:
+            if item.producto.nombre == producto.nombre:
+                return item
+        return None
+
+    def agregar_producto(self, producto, cantidad=1):
+        """
+        Agrega un producto al carrito verificando que la cantidad no exceda el stock disponible.
+        
+        Args:
+            producto (Producto): Producto a agregar.
+            cantidad (int): Cantidad a agregar.
+        
+        Raises:
+            ValueError: Si la cantidad total excede el stock del producto.
+        """
+        item = self._buscar_item(producto)
+        cantidad_actual = item.cantidad if item else 0
+
+        if cantidad_actual + cantidad > producto.stock:
+            raise ValueError("Cantidad a agregar excede el stock disponible")
+        
+        if item:
+            item.cantidad += cantidad
+        else:
+            self.items.append(ItemCarrito(producto, cantidad))
 
 
 class ItemCarrito:
@@ -27,15 +55,19 @@ class Carrito:
         self.items = []
 
     def agregar_producto(self, producto, cantidad=1):
-        """
-        Agrega un producto al carrito. Si el producto ya existe, incrementa la cantidad.
-        """
+    # Verifica el stock disponible
+        total_en_carrito = 0
         for item in self.items:
-            if item.producto.nombre == producto.nombre :
-                if item.cantidad + cantidad <= producto.stock:
-                    item.cantidad += cantidad
-                else:
-                    raise ValueError("Supera el stock")
+            if item.producto.nombre == producto.nombre:
+                total_en_carrito = item.cantidad
+                break
+        if total_en_carrito + cantidad > producto.stock:
+            raise ValueError("Cantidad a agregar excede el stock disponible")
+        
+        # Si el producto ya existe, incrementa la cantidad
+        for item in self.items:
+            if item.producto.nombre == producto.nombre:
+                item.cantidad += cantidad
                 return
         self.items.append(ItemCarrito(producto, cantidad))
 
