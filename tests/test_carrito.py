@@ -127,36 +127,31 @@ def test_calcular_total(carrito, producto_impresora, producto_escaner):
     # Assert
     assert total == 550.00
 
-def test_aplicar_descuento(carrito, producto_tablet):
+@pytest.mark.parametrize("porcentaje, esperado, es_valido", [
+    (0, 1000.00, True),
+    (10, 900.00, True),
+    (100, 0.00, True),
+    (-10, None, False),
+    (150, None, False)
+])
+# Como usamos los valores de conftest.py, producto_tablet ya está definido con un precio de $500.00
+def test_aplicar_descuento_parametrizado(carrito, producto_tablet, porcentaje, esperado, es_valido):
     """
     AAA:
     Arrange: Se crea un carrito y se agrega un producto con una cantidad determinada.
-    Act: Se aplica un descuento del 10% al total.
+    Act: Se aplica un descuento del según 10% al total.
     Assert: Se verifica que el total con descuento sea el correcto.
     """
     # Arrange
     carrito.agregar_producto(producto_tablet, cantidad=2)  # Total 1000
-    
-    # Act
-    total_con_descuento = carrito.aplicar_descuento(10)
-    
-    # Assert
-    assert total_con_descuento == 900.00
-
-def test_aplicar_descuento_limites(carrito, producto_smartphone):
-    """
-    AAA:
-    Arrange: Se crea un carrito y se agrega un producto.
-    Act y Assert: Se verifica que aplicar un descuento fuera del rango [0, 100] genere un error.
-    """
-    # Arrange
-    carrito.agregar_producto(producto_smartphone, cantidad=1)
-    
-    # Act y Assert
-    with pytest.raises(ValueError):
-        carrito.aplicar_descuento(150)
-    with pytest.raises(ValueError):
-        carrito.aplicar_descuento(-5)
+    # Act & Assert
+    # La condicional sirve para decidir si deberá comprobar un valor esperado o esperar un error
+    if es_valido:
+        total = carrito.aplicar_descuento(porcentaje)
+        assert total == esperado
+    else:
+        with pytest.raises(ValueError):
+            carrito.aplicar_descuento(porcentaje)
 
 def test_vaciar_carrito(carrito, producto_smartphone, producto_iphone):
     """
