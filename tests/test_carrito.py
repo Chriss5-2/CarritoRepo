@@ -249,6 +249,10 @@ def test_items_ordenar_por_criterio_parametrizado(carrito, prod1, prod2, criteri
         with pytest.raises(ValueError):
             carrito.obtener_items_ordenados(criterio)
 
+import pytest
+from src.carrito import Carrito
+from src.factories import ProductoFactory
+
 # REFRACTOR
 @pytest.mark.parametrize("prod1, porcentaje, cumple", [
     ("producto_smartwatch", 10, True),
