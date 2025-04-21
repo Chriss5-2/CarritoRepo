@@ -5,27 +5,7 @@ import pytest
 from src.carrito import Carrito, Producto
 from src.factories import ProductoFactory
 
-def test_agregar_producto_nuevo():
-    """
-    AAA:
-    Arrange: Se crea un carrito y se genera un producto.
-    Act: Se agrega el producto al carrito.
-    Assert: Se verifica que el carrito contiene un item con el producto y cantidad 1.
-    """
-    # Arrange
-    carrito = Carrito()
-    producto = ProductoFactory(nombre="Laptop", precio=1000.00)
-    
-    # Act
-    carrito.agregar_producto(producto)
-    
-    # Assert
-    items = carrito.obtener_items()
-    assert len(items) == 1
-    assert items[0].producto.nombre == "Laptop"
-    assert items[0].cantidad == 1
-
-def test_agregar_producto_con_conftest(carrito, producto_laptop):
+def test_agregar_producto_nuevo(carrito, producto_laptop):
     """
     AAA:
     Arrange: Se crea un carrito y se genera un producto.
