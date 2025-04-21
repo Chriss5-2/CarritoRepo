@@ -171,43 +171,36 @@ def test_vaciar_carrito(carrito, producto_smartphone, producto_iphone):
     # Assert
     assert len(items)==0 and carrito.calcular_total() == 0
 
-def test_aplicar_descuento_condicionado(carrito, producto_smartphone, producto_iphone):
+@pytest.mark.parametrize("porcentaje, minimo, cumple, prod1, prod2", [
+    (15, 500, True, "producto_smartphone", "producto_iphone"),
+    (15, 500, False, "producto_yogurt", "producto_mochila")
+])
+def test_aplicar_descuento_condiciocado_parametrizado(carrito, prod1, prod2, porcentaje, minimo, cumple, request):
     """
     AAA:
     Arrange: Se crea un carrito y se agregan productos
     Act: Se verifica si cumple los requisitos para aplicar un descuento
-    Assert: Se verifica si el costo total es menor al inicial
+    Assert: Se verifica si cumple o no y luego verifica si el costo total es menor al inicial o si son iguales
     """
     # Arrange
-    carrito.agregar_producto(producto_smartphone, cantidad=1)
-    carrito.agregar_producto(producto_iphone, cantidad=1)
-
-    # Act
+    producto1 = request.getfixturevalue(prod1)
+    producto2 = request.getfixturevalue(prod2)
+    carrito.agregar_producto(producto1, cantidad=1)
+    carrito.agregar_producto(producto2, cantidad=1)
     monto_antes = carrito.calcular_total()
-    monto_actual = carrito.aplicar_descuento_condicional(porcentaje=15, minimo=500)
-
-    # Assert
-    assert monto_actual < monto_antes
-
-def test_NO_aplicar_descuento_condicionado(carrito, producto_yogurt, producto_mochila):
-    """
-    AAA:
-    Arrange: Se crea un carrito y se agregan productos
-    Act: Se verifica si cumple los requisitos para aplicar un descuento
-    Assert: Se verifica que el costo actual es igual al inicial
-    """
-    # Arrange
-    carrito.agregar_producto(producto_yogurt, cantidad=1)
-    carrito.agregar_producto(producto_mochila, cantidad=1)
-
     # Act
-    monto_antes = carrito.calcular_total()
-    monto_actual = carrito.aplicar_descuento_condicional(porcentaje=15, minimo=500)
-
+    monto_actual = carrito.aplicar_descuento_condicional(porcentaje, minimo)
     # Assert
-    assert monto_actual == monto_antes
+    if cumple:
+        assert monto_actual < monto_antes
+    else:
+        assert monto_actual == monto_antes
 
-def test_hay_stock(carrito, producto_smartphone):
+@pytest.mark.parametrize("cantidad1, cantidad2, prod, sin_stock", [
+    (1, 2, "producto_smartphone", False),
+    (1, 5, "producto_smartphone", True),
+])
+def test_verificar_stock_parametrizado(carrito, prod, cantidad1, cantidad2, sin_stock, request):
     """
     AAA:
     Arrange: Se crea un carrito y se agrega un productp
@@ -215,27 +208,25 @@ def test_hay_stock(carrito, producto_smartphone):
     Assert: Se verifica que no supere el stock
     """
     # Arrange
-    carrito.agregar_producto(producto_smartphone, cantidad=1)
-    # Act
-    carrito.agregar_producto(producto_smartphone, cantidad=2)
-    items = carrito.obtener_items()
-    # Assert
-    assert len(items)==1 and items[0].cantidad<=items[0].producto.stock
+    producto = request.getfixturevalue(prod)
+    carrito.agregar_producto(producto, cantidad1)
 
-def test_NO_hay_stock(carrito, producto_smartphone):
-    """
-    AAA:
-    Arrange: Se crea un carrito y se agrega un productp
-    Act: Se agregan se agrega el mismo producto
-    Assert: Se verifica que ocurre un error al superar el stock
-    """
-    # Arrange
-    carrito.agregar_producto(producto_smartphone, cantidad=1)
-    # Act & Assert
-    with pytest.raises(ValueError):
-        carrito.agregar_producto(producto_smartphone, cantidad=5)
+    #Act & Assert
+    if sin_stock:
+        with pytest.raises(ValueError):
+            carrito.agregar_producto(producto, cantidad2)
+    else:
+        carrito.agregar_producto(producto, cantidad2)
+        items = carrito.obtener_items()
+        assert len(items)==1
+        assert items[0].cantidad <= producto.stock
 
-def test_items_ordenados_por_precio(carrito, producto_smartphone, producto_iphone):
+@pytest.mark.parametrize("prod1, prod2, criterio, ordena",[
+    ("producto_smartphone", "producto_mochila", "precio", True),
+    ("producto_smartphone", "producto_mochila", "nombre", True),
+    ("producto_smartphone", "producto_mochila", "stock", False),
+])
+def test_items_ordenar_por_criterio_parametrizado(carrito, prod1, prod2, criterio, ordena, request):
     """
     AAA:
     Arrange: Se crea un carrito y se agregan dos productos
@@ -243,38 +234,17 @@ def test_items_ordenados_por_precio(carrito, producto_smartphone, producto_iphon
     Assert: Se verifica que los precios vayan de orden ascedente
     """
     # Arrange
-    carrito.agregar_producto(producto_iphone, cantidad=1) #1000
-    carrito.agregar_producto(producto_smartphone, cantidad=1) #800
+    producto1 = request.getfixturevalue(prod1)
+    producto2 = request.getfixturevalue(prod2)
+    carrito.agregar_producto(producto1, cantidad=1) # Precio 1000, Nombre Smartphone
+    carrito.agregar_producto(producto2, cantidad=1) # Precio 200.5, Nombre Mochila
     # Act
-    items = carrito.obtener_items_ordenados("precio")
-    # Assert
-    assert items[0].producto.precio < items[1].producto.precio
-
-def test_items_ordenados_por_nombre(carrito, producto_smartphone, producto_iphone):
-    """
-    AAA:
-    Arrange: Se crea un carrito y se agregan dos productos
-    Act: Se ordenan de acuerdo al nombre
-    Assert: Se verifica que los nombres vayan de orden ascedente
-    """
-    # Arrange
-    carrito.agregar_producto(producto_smartphone, cantidad=1)
-    carrito.agregar_producto(producto_iphone, cantidad=1)
-    # Act
-    items = carrito.obtener_items_ordenados("nombre")
-    # Assert
-    assert items[0].producto.nombre < items[1].producto.nombre
-
-def test_items_ordenados_por_criterio_equivocado(carrito, producto_smartphone, producto_iphone):
-    """
-    AAA:
-    Arrange: Se crea un carrito y se agregan dos productos
-    Act: Se ordenan de acuerdo a un criterio que no existe
-    Assert: Se verifica que los precios vayan de orden ascedente
-    """
-    # Arrange
-    carrito.agregar_producto(producto_smartphone, cantidad=1)
-    carrito.agregar_producto(producto_iphone, cantidad=1)
-    # Act & Assert
-    with pytest.raises(ValueError):
-        items = carrito.obtener_items_ordenados("criterioOtro")
+    if ordena:
+        items = carrito.obtener_items_ordenados(criterio)
+        # El getattr nos ayuda a acceder al atributo indicado como texto
+        valor1 = getattr(items[0].producto, criterio)
+        valor2 = getattr(items[1].producto, criterio)
+        assert valor1 <= valor2
+    else:
+        with pytest.raises(ValueError):
+            carrito.obtener_items_ordenados(criterio)
