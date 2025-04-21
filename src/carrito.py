@@ -143,3 +143,24 @@ class Carrito:
             raise ValueError("El porcentaje debe estar entre 0 y 100")
         total = self.calcular_total()
         return total * (porcentaje / 100)
+
+    def aplicar_cupon(self, descuento_porcentaje, descuento_maximo):
+        """
+        Aplica un cupón de descuento al total del carrito, asegurando que el descuento no exceda el máximo permitido.
+        
+        Args:
+            descuento_porcentaje (float): Porcentaje de descuento a aplicar.
+            descuento_maximo (float): Valor máximo de descuento permitido.
+        
+        Returns:
+            float: Total del carrito después de aplicar el cupón.
+        
+        Raises:
+            ValueError: Si alguno de los valores es negativo.
+        """
+        if descuento_porcentaje < 0 or descuento_maximo < 0 or descuento_porcentaje>100:
+            raise ValueError("Los valores de descuento deben ser positivos")
+        total = self.calcular_total()
+        descuento_calculado = total * (descuento_porcentaje / 100)
+        descuento_final = min(descuento_calculado, descuento_maximo)
+        return total - descuento_final
